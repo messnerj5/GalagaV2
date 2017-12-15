@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\dd1eed9c800ad7c00500538caa86e4cd3bd39aad\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_401e10b2d33593c1eb14ac7d99a24bba89f90b7d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\36cc62c6b1b50dd966c6962e30f437c99e41a3af\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="952944218ecedea1554a513dec0c14d570642843">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_3c0032c31ce369df228bce84786a4b3f468efd61\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\8ac4b94283764c1bfaf2dd5f7746e78f25051713\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9935891f23923f39d002087085d9696568a9f657">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_075499629db1dbbf700a38b4371878b1c6699894\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\19de7ed5ffa9317757fb6807f70d0110446cd68e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="fcd01fd11233459f546c437ec927e9b61bf7caf1">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_af63cec17220314bf9c93cb8ec8ec32ccd1cde1a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\3359708dd8174de577282ebeb1fd0489dcc81054\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="88246166d5afb106f532f6e6deae683c66b42c89">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_8849ea2f82e6fb7cb26666b06f380e302b9d2503\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\71170a92688f398374f2de3ef4d813de119bf131\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="18d31838aa4fcc768a8a0516e22cc13b94655d89">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_0eb98244aea1e4a572832f42ad8288d06e08b50a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\College_Work\MyApps\Galaga\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="bedb1f0534d61defc44b5f629f59399083ef702a">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_2c11c3e5b9e771a3dea0f1bd8a7f644e5f7cbf57\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\c217b62ceb5d255d64fe9929e2a459b1a7148314\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="8df0e365e40beb151bc42dee20817721a6cab7b0">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_9c381f34be842652466f99d92381e1b00a778159\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\8591b64d84c64e7355e485c2e84fc6d815cba8eb\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2e92aa0163544a804a0b34f169ca61801770839a">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ff2de621084b98f9cbb61f8ba170699bc8757713\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\26.0.0-alpha1\support-annotations-26.0.0-alpha1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="023ee503b631f69511e335a061ea008f8da60f40">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-26.0.0-alpha1_b89429b8cd9a4e953ca645ec28070b45b9c64f06\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Joseph\.android\build-cache\48cbd2bcd54906abf67b81f9bf2febfd783a1052\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="47471eb19df288158b00b8d9cfa41bce7373f5cc">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c78b28b7d558992582b16869073aa89f2d5495c4\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\College_Work\MyApps\Galaga\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.1"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="D:\College_Work\MyApps\Galaga\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_f88c23150ba0360228b45bdfb74af1813c706e10\classes.dex" />
+    </item>
+
+</items>
