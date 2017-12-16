@@ -17,7 +17,8 @@ import android.widget.ImageView;
 public class Fighter extends GameObject implements Shootable {
     int xPos , yPos;
     int lives = 1;
-
+    public static boolean isAlive;
+    int counter = 0;
     private int[] currPos = new int[2];
     private int[] gridPos = new int[2];
 
@@ -35,6 +36,7 @@ public class Fighter extends GameObject implements Shootable {
         gridPos[0] = 0;
         gridPos[1] = grid.getGridHeight() - 1;
         currPos = grid.getBoard()[gridPos[0]][gridPos[1]].getCornerCoord();
+        isAlive = true;
 
     }
 
@@ -62,7 +64,7 @@ public class Fighter extends GameObject implements Shootable {
 
     @Override
     public void init() {
-
+        isAlive = true;
     }
 
     @Override
@@ -70,8 +72,23 @@ public class Fighter extends GameObject implements Shootable {
 
     }
 
+    public static void setIsAlive(boolean alive){
+        isAlive = alive;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
-        canvas.drawBitmap(grid.getImage("fighter"),currPos[0],currPos[1],null);
+        if(isAlive){
+            canvas.drawBitmap(grid.getImage("fighter"),currPos[0],currPos[1],null);
+        }else if(counter<10){
+            canvas.drawBitmap(grid.getImage("explosion"),currPos[0],currPos[1],null);
+            counter++;
+        }else{
+            if(Enemy.movingEnemies.size()==0){
+                init();
+                Enemy.movingCharacters = true;
+            }
+        }
+
     }
 }

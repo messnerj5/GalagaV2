@@ -47,7 +47,7 @@ public class MissileCharacter{
 
    // @Override
     public void onUpdate() {
-        currPos[1] -= 10 ;
+        //currPos[1] -= 10 ;
     }
 
     //@Override

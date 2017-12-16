@@ -37,6 +37,8 @@ public class Enemy extends GameObject {
 
     private int currentLayer = 0;
 
+    public static boolean movingCharacters = true;
+
     int count= 0;
     Random random = new Random();
     int randCount = 10;
@@ -45,6 +47,10 @@ public class Enemy extends GameObject {
         this.grid = grid;
         setStartPositions();
         //chooseCharToMove();
+    }
+
+    public static void setMovingCharacters(boolean movingCharacter){
+        movingCharacters = movingCharacter;
     }
 
     public void setStartPositions(){
@@ -78,19 +84,22 @@ public class Enemy extends GameObject {
 
     private void chooseCharToMove(){
         boolean isEmpty = true;
-
-        while(isEmpty) {
+        int count = 0;
+        while(isEmpty && (count < 10)) {
             int randx = random.nextInt(enemyRestPositions[0].length);
             int randy = random.nextInt(enemyRestPositions.length);
             EnemyCharacter temp = enemyRestPositions[randy][randx];
             if(temp != null){
                enemyRestPositions[randy][randx] = null;
                movingEnemies.add(temp);
-                //temp.setHittable(true);
+                temp.setHittable(true);
                 //change hittable status
                 isEmpty = false;
             }
+
+            count++;
         }
+
     }
 
 
@@ -106,6 +115,7 @@ public class Enemy extends GameObject {
         //
         //still need a hittable datastructure potentially...for speed
         //-----------------------------------
+
         for (int i = 0;i< movingEnemies.size();i++) {
             EnemyCharacter e = movingEnemies.get(i);
             int currPos[] = e.getCurrPos();
@@ -120,6 +130,7 @@ public class Enemy extends GameObject {
                 enemyRestPositions[currPos[0]][currPos[1]] = e;
             }
         }
+
     }
 
 //    public void setHittableRestEnemies(){
@@ -168,6 +179,7 @@ public class Enemy extends GameObject {
 
     @Override
     public void init() {
+        movingCharacters = true;
     }
 
     @Override
@@ -178,25 +190,32 @@ public class Enemy extends GameObject {
     public void onDraw(Canvas canvas) {
         int[] arr = new int[2];
         //setHittableEnemies();
-        for(int i = 0; i < enemyRestPositions.length - 1; i++){
-            for(int j = 0; j < enemyRestPositions[0].length - 1; j++){
+        for(int i = 0; i < enemyRestPositions.length ; i++){
+            for(int j = 0; j < enemyRestPositions[0].length ; j++){
                 EnemyCharacter temp = enemyRestPositions[i][j];
                 if(temp != null){
                     arr = temp.getRestLocation();
                     if(temp.getIsDestroy()){
-                        canvas.drawBitmap(grid.getImage("explosion"),arr[0],arr[1],null);
-                        enemyRestPositions[i][j] = null;
+                        temp.setBeingDestroyed(true);
+                        if(temp.getDestroyCounter()<5) {
+                            canvas.drawBitmap(grid.getImage("explosion"), arr[0], arr[1], null);
+                            temp.setDestroyCounter(temp.getDestroyCounter()+1);
+                        }else{
+                            enemyRestPositions[i][j] = null;
+                        }
                     }else {
                         canvas.drawBitmap(grid.getImage(temp.getEnemyType()), arr[0], arr[1], null);
                     }
                 }
             }
         }
-        if(count % 2 == 0) {
+        //How fast
+        if(count % 10 == 0) {
             moveCharacter();
 
         }
-        if(count % randCount == 0){
+        //Choose enemy
+        if(count % 100 == 0 && movingCharacters){
             chooseCharToMove();
             randCount = random.nextInt(20) + 1;
         }
@@ -206,11 +225,15 @@ public class Enemy extends GameObject {
         for (EnemyCharacter c:e) {
             arr = c.getCurrPos();
             if(c.getIsDestroy()){
-                canvas.drawBitmap(grid.getImage("explosion"),arr[0],arr[1],null);
-                movingEnemies.remove(c);
-            }else{
-                canvas.drawBitmap(grid.getImage(c.getEnemyType()),arr[0],arr[1],null);
-
+                c.setBeingDestroyed(true);
+                if(c.getDestroyCounter()<5) {
+                    canvas.drawBitmap(grid.getImage("explosion"), arr[0], arr[1], null);
+                    c.setDestroyCounter(c.getDestroyCounter()+1);
+                }else{
+                    movingEnemies.remove(c);
+                }
+            }else {
+                canvas.drawBitmap(grid.getImage(c.getEnemyType()), arr[0], arr[1], null);
             }
         }
     }

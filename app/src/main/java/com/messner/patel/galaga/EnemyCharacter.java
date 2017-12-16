@@ -12,7 +12,8 @@ public class EnemyCharacter {
     private boolean isHittable;
     private boolean isMoving;
     private boolean isDestroy = false;
-
+    boolean beingDestroyed;
+    int destroyCounter;
 
 
     public EnemyCharacter(String enemyType, int[] startLoc, int[] gridPos) {
@@ -22,10 +23,27 @@ public class EnemyCharacter {
         currPos[1] = restPos[1];
         this.gridPos[0] = gridPos[0];
         this.gridPos[1] = gridPos[1];
+       beingDestroyed = false;
+       destroyCounter = 0;
         //this.isHittable = isHittable;
         //this.isMoving = isMoving;
     }
 
+    public boolean getIsBeingDestroyed() {
+        return beingDestroyed;
+    }
+
+    public void setBeingDestroyed(boolean beingDestoyed) {
+        this.beingDestroyed = beingDestoyed;
+    }
+
+    public int getDestroyCounter() {
+        return destroyCounter;
+    }
+
+    public void setDestroyCounter(int destroyCounter) {
+        this.destroyCounter = destroyCounter;
+    }
 
     public int[] getRestLocation(){
         return restPos;

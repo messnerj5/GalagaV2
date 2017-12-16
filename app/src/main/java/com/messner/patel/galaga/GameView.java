@@ -7,13 +7,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static android.content.Context.AUDIO_SERVICE;
 
 /**
  * Created by Kishan on 12/4/2017.
@@ -21,7 +27,7 @@ import java.util.List;
 
 public class GameView extends SurfaceView implements Runnable , View.OnTouchListener {
 
-    volatile boolean playing = true;
+    volatile static boolean playing = true;
     Thread gameThread;
     SurfaceHolder surfaceHolder;
     private static final int FPS = 30;
@@ -38,6 +44,14 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
     private Paint paint;
     GameObject testFighter;
     boolean continuousTouch = false;
+    public static HashMap<String, Integer> mapOfSounds;
+    public static SoundPool publicSoundPool;
+    SoundPool soundPool;
+    AudioManager audioManager;
+    private boolean loaded = false;
+    int defaultShot;
+
+
 
 
 
@@ -46,12 +60,24 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
 
     GameGrid grid;
 
+    public static  HashMap<String, Integer> getMapOfSounds() {
+        return mapOfSounds;
+    }
+
+    public static SoundPool getPublicSoundPool() {
+        return publicSoundPool;
+    }
+
     public static int getScreenHeight() {
         return SCREEN_HEIGHT;
     }
 
     public static int getScreenWidth() {
         return SCREEN_WIDTH;
+    }
+
+    public static void setPlaying(boolean isPlaying){
+        playing = isPlaying;
     }
 
     public GameView(Context context, Point point) {
@@ -66,7 +92,8 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         shootButton.setVisibility(View.VISIBLE);
 **/
 
-
+       // mapOfSounds = new HashMap<String, Integer>();
+      //  publicSoundPool = new SoundPool(10 , AudioManager.STREAM_MUSIC, 100);
         surfaceHolder = this.getHolder();
         screenSize = point;
         SCREEN_WIDTH = point.x;
@@ -89,7 +116,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         gameObjects.add(testFighter);
         gameObjects.add(new StarField(100,30.0f));
         gameObjects.add(enemy);
-        Missile missile = new Missile(grid);
+        Missile missile = new Missile(getContext(),grid , t[0] , t[1]);
         gameObjects.add(missile);
        this.setOnTouchListener(this);
 
@@ -116,6 +143,9 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         currPos = grid.moveSide(currPos,direction);
         ((Fighter) gameObjects.get(0)).setCurrPos(currPos);
         ((Fighter) gameObjects.get(0)).setGridPos(direction);
+        ((Missile) gameObjects.get(3)).setXPos(currPos[0]);
+        ((Missile) gameObjects.get(3)).setYPos(currPos[1]);
+
         //gameObjects.get(0).setxPos(gameObjects.get(0).getxPos() + adjustment);
       //  gameObjects.get(0).setyPos(SCREEN_HEIGHT - 160);
 
@@ -141,8 +171,12 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
             case MotionEvent.ACTION_POINTER_DOWN:
                 //gameObjects.add(new MissileCharacter(grid,
                   //      (((Fighter) gameObjects.get(0)).getCurrPos())));
+                if(Fighter.isAlive) {
+                    ((Missile) gameObjects.get(3)).addFighterMissile(((Fighter) gameObjects.get(0)).getCurrPos(), ((Fighter) gameObjects.get(0)).getGridPos());
+                    soundPool.load(getContext(), R.raw.defaultshot, 1);
+                    soundPool.play(defaultShot, 100, 100, 1, 0, 1f);
+                }
 
-                ((Missile) gameObjects.get(3)).addFighterMissile(((Fighter) gameObjects.get(0)).getCurrPos(), ((Fighter) gameObjects.get(0)).getGridPos());
                 break;
 
 
@@ -184,6 +218,9 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
             previousTimeMilliseconds = currentTimeMilliseconds;
 
         }
+
+
+
     }
 
     public void pause(){
@@ -195,6 +232,37 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         }
     }
     public void init(){
+        audioManager = (AudioManager) getContext().getSystemService(AUDIO_SERVICE);
+        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+
+        // Current volumn Index of particular stream type.
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        // Get the maximum volume index for a particular stream type.
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        // Volumn (0 --> 1)
+        float volume = currentVolumeIndex / maxVolumeIndex;
+
+        // Suggests an audio stream whose volume should be changed by
+        // the hardware volume controls.
+        //setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        soundPool = new SoundPool(3,AudioManager.STREAM_MUSIC,50);
+
+        this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                loaded = true;
+            }
+        });
+        defaultShot = soundPool.load(getContext(),R.raw.defaultshot,1);
+        soundPool.play(defaultShot,100,100,1,0,1f);
+
+
+        for(i = 0; i<gameObjects.size();i++){
+            gameObjects.get(i).init();
+        }
+        /**
         if(surfaceHolder.getSurface().isValid()){
             Canvas canvas = surfaceHolder.lockCanvas();
             for(i = 0; i<gameObjects.size();i++){
@@ -202,6 +270,8 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
             }
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
+         **/
+
     }
 
     public void resume(){
@@ -214,7 +284,9 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
 
         for(i = 0; i<gameObjects.size();i++){
             gameObjects.get(i).onUpdate();
-
+        }
+        if(!Fighter.isAlive && !Enemy.movingCharacters){
+            //init();
         }
 
     }
@@ -235,5 +307,10 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         }
 
     }
+
+
+
+
+
 
 }

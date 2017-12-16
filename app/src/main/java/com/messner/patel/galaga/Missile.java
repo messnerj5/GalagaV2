@@ -1,86 +1,138 @@
 package com.messner.patel.galaga;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static android.content.Context.AUDIO_SERVICE;
 
 /**
  * Created by Joseph on 12/10/2017.
  */
 
-public class Missile extends GameObject  {
+public class Missile extends GameObject {
+
 
     GameGrid grid;
     public static ArrayList<MissileCharacter> fighterMissile = new ArrayList<>();
     public static ArrayList<MissileCharacter> enemyMissile = new ArrayList<>();
-    Random random;
+    Context context;
     int count = 0;
+    SoundPool soundPool;
+    private boolean loaded;
+    int defaultShot;
+    AudioManager audioManager;
+    int xPos,yPos;
 
-    public Missile(GameGrid grid) {
+
+    public Missile(Context context, GameGrid grid , int xPos, int yPos) {
         this.grid = grid;
+        this.context = context;
+        this.xPos = xPos;
+        this.yPos = yPos;
+
+    }
+
+    public void setXPos(int xPos){
+        this.xPos = xPos;
+    }
+
+    public void setYPos(int yPos){
+        this.yPos = yPos;
     }
 
 
-    public void addFighterMissile(int[] pos, int[] gridPos){
+    public void addFighterMissile(int[] pos, int[] gridPos) {
         fighterMissile.add(new MissileCharacter(grid, pos, gridPos));
     }
 
-    public void addEnemyMissile(int[] pos, int[] gridPos){
-        enemyMissile.add(new MissileCharacter(grid, pos,gridPos));
+    public void addEnemyMissile(int[] pos, int[] gridPos) {
+        enemyMissile.add(new MissileCharacter(grid, pos, gridPos));
     }
 
-    private void updateFighterMissile(){
+
+    private void updateFighterMissile() {
         MissileCharacter missile;
-        for(int i = 0; i < fighterMissile.size();i++){
+       // int originalSize = fighterMissile.size();
+        for (int i = 0; i < fighterMissile.size(); i++) {
             missile = fighterMissile.get(i);
             int temp[] = missile.getCurrPos();
-            if(temp[1] < 0){
+            if (temp[1] < 0) {
                 fighterMissile.remove(missile);
             }
             missile.setCurrPos(grid.moveVertical(temp, -1));
 
-            if(missile.getContact()){
+            if (missile.getContact()) {
                 fighterMissile.remove(missile);
             }
         }
     }
 
-    private void updateEnemyMissile(){
+    private void updateEnemyMissile() {
         MissileCharacter missile;
-        for(int i = 0; i < enemyMissile.size();i++){
+        for (int i = 0; i < enemyMissile.size(); i++) {
             missile = enemyMissile.get(i);
             int temp[] = missile.getCurrPos();
 
             missile.setCurrPos(grid.moveVertical(temp, 1));
-            if(temp[1] > grid.getPlayableHeight()){
+            if (temp[1] > grid.getPlayableHeight()) {
                 enemyMissile.remove(missile);
             }
 
         }
     }
 
-    private void shootEnemyMissiles(){
+    private void shootEnemyMissiles() {
+        Random random = new Random();
         ArrayList<EnemyCharacter> e = Enemy.getMovingEnemies();
-        int r = e.size() - 1;
-       // int r = random.nextInt(e.size());
-        addEnemyMissile(e.get(r).getCurrPos(),e.get(r).getGridPos());
+
+        // int r = e.size() - 1;
+        if(e.size() == 0){
+            System.out.println("Made it to before");
+          //  addEnemyMissile(e.get(0).getCurrPos(), e.get(0).getGridPos());
+            System.out.println("Crashing after");
+            //GameView.getPublicSoundPool().play(GameView.getMapOfSounds().get("EnemyShot"), 10, 10,
+            //         1, 0, 1f);
+            soundPool.play(defaultShot,100,100,1,0,1f);
+        }else {
+            int r = random.nextInt(e.size());
+
+            if (e.get(r) == null) {
+            } else {
+                addEnemyMissile(e.get(r).getCurrPos(), e.get(r).getGridPos());
+                //GameView.getPublicSoundPool().play(GameView.getMapOfSounds().get("EnemyShot"), 10, 10,
+                //         1, 0, 1f);
+                soundPool.play(defaultShot, 100, 100, 1, 0, 1f);
+
+
+            }
+        }
     }
 
 
-    private void checkEnemyCollision(){
+    private void checkEnemyCollision() {
         MissileCharacter m;
         EnemyCharacter e;
 
-        for(int j = 0; j < fighterMissile.size();j++) {
+        for (int j = 0; j < fighterMissile.size(); j++) {
             m = fighterMissile.get(j);
             int missile[] = m.getCurrPos();
             for (int i = 0; i < Enemy.movingEnemies.size(); i++) {
                 e = Enemy.movingEnemies.get(i);
                 int move[] = e.getCurrPos();
+                System.out.println("values in move");
+                System.out.println(move[0]);
+                System.out.println(move[1]);
 
 
-                if (move[0] == missile[0] && move[1] == missile[1]){
+                if ((move[0] == missile[0] && move[1] == missile[1]) ||
+                        (move[0] == missile[0] && move[1]-grid.getPixelsPerBox()  == missile[1])){
+
                     m.setContact(true);
                     e.setIsDestroy(true);
                     break;
@@ -88,26 +140,26 @@ public class Missile extends GameObject  {
             }
         }
 
-        for(int j = 0; j < fighterMissile.size();j++){
+        for (int j = 0; j < fighterMissile.size(); j++) {
             m = fighterMissile.get(j);
             int missile[] = m.getCurrPos();
             boolean isBreak = false;
-            for(int i = Enemy.enemyRestPositions.length - 1;i >= 0;i--){
-              //  if(m.gridPos[0])
+            for (int i = Enemy.enemyRestPositions.length-1; i >= 0; i--) {
+                //  if(m.gridPos[0])
 
-                for(int k = 0; k < Enemy.enemyRestPositions[0].length - 1; k++) {
+                for (int k = 0; k < Enemy.enemyRestPositions[0].length; k++) {
 
                     e = Enemy.enemyRestPositions[i][k];
                     if (e != null) {
                         int[] move = e.getCurrPos();
-                        if (move[0] == missile[0] && move[1] == missile[1]) {
+                        if ((move[0] == missile[0] && move[1] == missile[1] )) {
                             m.setContact(true);
                             e.setIsDestroy(true);
                             isBreak = true;
                             break;
                         }
                     }
-                    if(isBreak){
+                    if (isBreak) {
                         break;
                     }
                 }
@@ -116,9 +168,49 @@ public class Missile extends GameObject  {
         }
     }
 
+    private void checkFighterCollision(){
+        for(MissileCharacter missile:enemyMissile){
+            int[] temp = missile.getCurrPos();
+            if(temp[0] == xPos && temp[1] == yPos){
+
+                Enemy.setMovingCharacters(false);
+                Fighter.setIsAlive(false);
+
+
+            }
+        }
+    }
+
+
+
 
     @Override
     public void init() {
+        audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+
+        // Current volumn Index of particular stream type.
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        // Get the maximum volume index for a particular stream type.
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        // Volumn (0 --> 1)
+        float volume = currentVolumeIndex / maxVolumeIndex;
+
+        // Suggests an audio stream whose volume should be changed by
+        // the hardware volume controls.
+        //setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        soundPool = new SoundPool(3,AudioManager.STREAM_MUSIC,50);
+
+        this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                loaded = true;
+            }
+        });
+        defaultShot = soundPool.load(context,R.raw.defaultshot,1);
+
 
     }
 
@@ -127,6 +219,7 @@ public class Missile extends GameObject  {
         updateFighterMissile();
         updateEnemyMissile();
         checkEnemyCollision();
+        checkFighterCollision();
     }
 
     @Override
@@ -142,6 +235,11 @@ public class Missile extends GameObject  {
             temp = enemyMissile.get(i).getCurrPos();
 
             canvas.drawBitmap(grid.rotateImage("missile",180), temp[0], temp[1], null);
+
+
+
+
+
         }
 
         if(count % 10 == 0){
