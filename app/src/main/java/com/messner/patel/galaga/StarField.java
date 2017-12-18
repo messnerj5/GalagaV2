@@ -14,20 +14,23 @@ public class StarField extends GameObject {
     protected Vector2 points[];
     protected int numberOfPoints;
     protected Paint paint;
-    protected float currentAlpha = 255;
+    protected float currentAlpha = 1023;
     protected float twinkleSpeed = 100.0f;
     protected int direction = 1;
     protected int maxHeight = 0;
+    GameGrid gameGrid;
 
-    public StarField(int numberOfPoints, float twinkleSpeed, int maxHeight) {
+    public StarField(int numberOfPoints, float twinkleSpeed, GameGrid gameGrid) {
         this.numberOfPoints = numberOfPoints;
         this.twinkleSpeed = twinkleSpeed;
         paint = new Paint();
+        this.gameGrid = gameGrid;
 
-        this.maxHeight = maxHeight;
+        this.maxHeight = gameGrid.getPlayableHeight();
 
         paint.setColor(Color.argb((int)currentAlpha,255,255,255));
         points = new Vector2[numberOfPoints];
+
 
         Random rand = new Random();
         for(int i = 0; i<numberOfPoints;i++){
@@ -51,29 +54,10 @@ public class StarField extends GameObject {
     private void scrollStars(){
         for(int i = 0 ; i<numberOfPoints;i++){
 
-            points[i].setY((points[i].y + 1) % maxHeight );
+            points[i].setY((points[i].y + 10) % maxHeight );
         }
     }
 
-    private void calculateAlpha(){
-        if(direction>0){
-
-            currentAlpha = (currentAlpha + twinkleSpeed *GameView.deltaTime * direction);
-
-            if(currentAlpha >= 255){
-                currentAlpha = 255;
-                direction*=-1;
-            }
-
-        }else{
-            currentAlpha = (currentAlpha + twinkleSpeed *GameView.deltaTime * direction);
-
-            if(currentAlpha <= 0){
-                currentAlpha = 0;
-                direction*=-1;
-            }
-        }
-    }
 
 
 

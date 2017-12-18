@@ -59,7 +59,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
 
     int duration = Toast.LENGTH_SHORT;
 
-    final String winMessage = "You win, suck my dick";
+    final String winMessage = "You win, Congratulations!";
 
     Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -141,7 +141,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         testFighter = new Fighter(grid,t[0] , t[1]);
 
         gameObjects.add(testFighter);
-        gameObjects.add(new StarField(100,30.0f, SCREEN_HEIGHT));
+        gameObjects.add(new StarField(100,30.0f, grid));
         gameObjects.add(enemy);
         Missile missile = new Missile(getContext(),grid , t[0] , t[1]);
         gameObjects.add(missile);
