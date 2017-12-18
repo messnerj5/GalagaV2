@@ -26,9 +26,9 @@ public class Enemy extends GameObject {
     private final int startLocRed = 1 + GameGrid.shiftSpace; //From left the amount of grid in the red guys start
     private final int startLocBlue = 0 + GameGrid.shiftSpace;
 
-    private  int quantGreenGalaga = 4;
-    private  int quantRedGalaga = 16;
-    private  int quantBlueGalaga = 20;
+    private  int quantGreenGalaga = 0;//4
+    private  int quantRedGalaga = 0; //16
+    private  int quantBlueGalaga = 2; //20
 
     private int quantGreenLayers = 1;
     private int quantRedLayers = 2;
@@ -38,7 +38,7 @@ public class Enemy extends GameObject {
     private int currentLayer = 0;
 
     public static boolean movingCharacters = true;
-
+    boolean enemiesAlive = true;
     int count= 0;
     Random random = new Random();
     int randCount = 10;
@@ -179,7 +179,13 @@ public class Enemy extends GameObject {
 
     @Override
     public void init() {
+
         movingCharacters = true;
+
+        if(movingEnemies.size() == 0 && enemiesAlive){
+            setStartPositions();
+        }
+
     }
 
     @Override
@@ -188,12 +194,14 @@ public class Enemy extends GameObject {
 
     @Override
     public void onDraw(Canvas canvas) {
+        enemiesAlive = true;
         int[] arr = new int[2];
         //setHittableEnemies();
         for(int i = 0; i < enemyRestPositions.length ; i++){
             for(int j = 0; j < enemyRestPositions[0].length ; j++){
                 EnemyCharacter temp = enemyRestPositions[i][j];
                 if(temp != null){
+                    enemiesAlive = false;
                     arr = temp.getRestLocation();
                     if(temp.getIsDestroy()){
                         temp.setBeingDestroyed(true);

@@ -25,7 +25,7 @@ public class Missile extends GameObject {
     int count = 0;
     SoundPool soundPool;
     private boolean loaded;
-    int defaultShot;
+    int defaultShot,enemyDie,fighterDie;
     AudioManager audioManager;
     int xPos,yPos;
 
@@ -92,13 +92,13 @@ public class Missile extends GameObject {
         ArrayList<EnemyCharacter> e = Enemy.getMovingEnemies();
 
         // int r = e.size() - 1;
-        if(e.size() == 0){
+        if(e.size() == 0 || !Fighter.isAlive){
             System.out.println("Made it to before");
           //  addEnemyMissile(e.get(0).getCurrPos(), e.get(0).getGridPos());
             System.out.println("Crashing after");
             //GameView.getPublicSoundPool().play(GameView.getMapOfSounds().get("EnemyShot"), 10, 10,
             //         1, 0, 1f);
-            soundPool.play(defaultShot,100,100,1,0,1f);
+           // soundPool.play(defaultShot,100,100,1,0,1f);
         }else {
             int r = random.nextInt(e.size());
 
@@ -107,7 +107,7 @@ public class Missile extends GameObject {
                 addEnemyMissile(e.get(r).getCurrPos(), e.get(r).getGridPos());
                 //GameView.getPublicSoundPool().play(GameView.getMapOfSounds().get("EnemyShot"), 10, 10,
                 //         1, 0, 1f);
-                soundPool.play(defaultShot, 100, 100, 1, 0, 1f);
+                soundPool.play(defaultShot, 100, 100, 2, 0, 1f);
 
 
             }
@@ -118,11 +118,12 @@ public class Missile extends GameObject {
     private void checkEnemyCollision() {
         MissileCharacter m;
         EnemyCharacter e;
-
+        boolean fighterWin = true;
         for (int j = 0; j < fighterMissile.size(); j++) {
             m = fighterMissile.get(j);
             int missile[] = m.getCurrPos();
             for (int i = 0; i < Enemy.movingEnemies.size(); i++) {
+                fighterWin = false;
                 e = Enemy.movingEnemies.get(i);
                 int move[] = e.getCurrPos();
                 System.out.println("values in move");
@@ -135,6 +136,7 @@ public class Missile extends GameObject {
 
                     m.setContact(true);
                     e.setIsDestroy(true);
+                    soundPool.play(enemyDie,100,100,1,0,1f);
                     break;
                 }
             }
@@ -151,17 +153,20 @@ public class Missile extends GameObject {
 
                     e = Enemy.enemyRestPositions[i][k];
                     if (e != null) {
+                        fighterWin &= false;
                         int[] move = e.getCurrPos();
-                        if ((move[0] == missile[0] && move[1] == missile[1] )) {
+                        if ((move[0] == missile[0] && move[1] == missile[1] && !e.beingDestroyed )) {
                             m.setContact(true);
                             e.setIsDestroy(true);
                             isBreak = true;
+                            soundPool.play(enemyDie,100,100,1,0,1f);
                             break;
                         }
                     }
                     if (isBreak) {
                         break;
                     }
+                    GameView.setFighterWin(fighterWin);
                 }
 
             }
@@ -171,10 +176,12 @@ public class Missile extends GameObject {
     private void checkFighterCollision(){
         for(MissileCharacter missile:enemyMissile){
             int[] temp = missile.getCurrPos();
-            if(temp[0] == xPos && temp[1] == yPos){
+            if(temp[0] == xPos && temp[1] == yPos && Fighter.isAlive){
 
                 Enemy.setMovingCharacters(false);
                 Fighter.setIsAlive(false);
+
+                soundPool.play(fighterDie,100,100,1,0,1f);
 
 
             }
@@ -201,7 +208,7 @@ public class Missile extends GameObject {
         // Suggests an audio stream whose volume should be changed by
         // the hardware volume controls.
         //setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        soundPool = new SoundPool(3,AudioManager.STREAM_MUSIC,50);
+        soundPool = new SoundPool(10,AudioManager.STREAM_MUSIC,50);
 
         this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -210,6 +217,8 @@ public class Missile extends GameObject {
             }
         });
         defaultShot = soundPool.load(context,R.raw.defaultshot,1);
+        enemyDie = soundPool.load(context,R.raw.enemydestroyed,1);
+        fighterDie = soundPool.load(context,R.raw.fighterdie,1);
 
 
     }

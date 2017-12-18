@@ -10,10 +10,14 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +54,21 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
     AudioManager audioManager;
     private boolean loaded = false;
     int defaultShot;
+    static boolean fighterWin = false;
 
 
+    int duration = Toast.LENGTH_SHORT;
 
+    final String winMessage = "You win, suck my dick";
 
+    Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message message) {
+            Toast toast = Toast.makeText(getContext(), winMessage, duration);
+
+            toast.show();
+        }
+    };
 
     Bitmap thisFighter;
 
@@ -79,6 +94,18 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
     public static void setPlaying(boolean isPlaying){
         playing = isPlaying;
     }
+
+    public static void setFighterWin(boolean fighterWin1) {
+        fighterWin = fighterWin1;
+    }
+
+    void workerThread() {
+        // And this is how you call it from the worker thread:
+        Message message = mHandler.obtainMessage();
+
+        message.sendToTarget();
+    }
+
 
     public GameView(Context context, Point point) {
         super(context);
@@ -114,7 +141,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         testFighter = new Fighter(grid,t[0] , t[1]);
 
         gameObjects.add(testFighter);
-        gameObjects.add(new StarField(100,30.0f));
+        gameObjects.add(new StarField(100,30.0f, SCREEN_HEIGHT));
         gameObjects.add(enemy);
         Missile missile = new Missile(getContext(),grid , t[0] , t[1]);
         gameObjects.add(missile);
@@ -207,7 +234,16 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         while(playing){
             currentTimeMilliseconds = System.currentTimeMillis();
             deltaTime = (currentTimeMilliseconds - previousTimeMilliseconds)/1000.0f;
+            if(fighterWin){
 
+                fighterWin = false;
+                workerThread();
+                for(int i = 0; i<duration; i++){
+
+                }
+                init();
+
+            }
             update();
             draw();
             try{
@@ -233,7 +269,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
     }
     public void init(){
         audioManager = (AudioManager) getContext().getSystemService(AUDIO_SERVICE);
-        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+       // soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
 
         // Current volumn Index of particular stream type.
         float currentVolumeIndex = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -247,7 +283,7 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
         // Suggests an audio stream whose volume should be changed by
         // the hardware volume controls.
         //setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        soundPool = new SoundPool(3,AudioManager.STREAM_MUSIC,50);
+        soundPool = new SoundPool(10,AudioManager.STREAM_MUSIC,50);
 
         this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -255,8 +291,8 @@ public class GameView extends SurfaceView implements Runnable , View.OnTouchList
                 loaded = true;
             }
         });
-        defaultShot = soundPool.load(getContext(),R.raw.defaultshot,1);
-        soundPool.play(defaultShot,100,100,1,0,1f);
+        defaultShot = soundPool.load(getContext(),R.raw.defaultshot,2);
+        //soundPool.play(defaultShot,100,100,1,0,1f);
 
 
         for(i = 0; i<gameObjects.size();i++){

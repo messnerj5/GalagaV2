@@ -14,14 +14,18 @@ public class StarField extends GameObject {
     protected Vector2 points[];
     protected int numberOfPoints;
     protected Paint paint;
-    protected float currentAlpha = 0;
-    protected float twinkleSpeed = 20.0f;
+    protected float currentAlpha = 255;
+    protected float twinkleSpeed = 100.0f;
     protected int direction = 1;
+    protected int maxHeight = 0;
 
-    public StarField(int numberOfPoints, float twinkleSpeed) {
+    public StarField(int numberOfPoints, float twinkleSpeed, int maxHeight) {
         this.numberOfPoints = numberOfPoints;
         this.twinkleSpeed = twinkleSpeed;
         paint = new Paint();
+
+        this.maxHeight = maxHeight;
+
         paint.setColor(Color.argb((int)currentAlpha,255,255,255));
         points = new Vector2[numberOfPoints];
 
@@ -39,8 +43,16 @@ public class StarField extends GameObject {
 
     @Override
     public void onUpdate() {
-        calculateAlpha();
+       // calculateAlpha();
+        scrollStars();
 
+    }
+
+    private void scrollStars(){
+        for(int i = 0 ; i<numberOfPoints;i++){
+
+            points[i].setY((points[i].y + 1) % maxHeight );
+        }
     }
 
     private void calculateAlpha(){
